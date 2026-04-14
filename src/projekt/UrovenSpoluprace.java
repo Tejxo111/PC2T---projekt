@@ -1,5 +1,5 @@
 package projekt;
-
+ 
 public enum UrovenSpoluprace {
     SPATNA(1),
     PRUMERNA(2),
