@@ -16,4 +16,4 @@ Každý zaměstnanec je při přijetí do firmy zařazen do jedné ze dvou speci
 * Kompletní odebrání zaměstnance ze systému (včetně smazání všech jeho vazeb u ostatních kolegů).
 * Vyhledávání zaměstnanců podle ID s výpisem detailních informací.
 * Spouštění speciálních dovedností podle zařazení do skupiny (polymorfismus).
-* *(Plánováno)* Abecední výpisy, globální statistiky sítě a export/import dat ze souborů a SQL databáze.
+* Abecední výpisy, globální statistiky sítě a export/import dat ze souborů a SQL databáze.
