@@ -1,3 +1,4 @@
+import java.util.Locale;
 import java.util.Map;
 
 public class BezpecnostniSpecialista extends Zamestnanec {
@@ -29,8 +30,8 @@ public class BezpecnostniSpecialista extends Zamestnanec {
 
         System.out.println("\n--- Bezpečnostní zpráva ---");
         System.out.println("Specialista: " + getJmeno() + " " + getPrijmeni());
-        System.out.println("Počet vazeb: " + pocetSpolupracovniku + " (Průměrná kvalita: " + String.format("%.1f", prumernaKvalitaSpoluprace) + "/3.0)");
-        System.out.println("Rizikové skóre: " + String.format("%.2f", celkoveRizikoveSkore));
+        System.out.println("Počet vazeb: " + pocetSpolupracovniku + " (Průměrná kvalita: " + String.format(Locale.US, "%.1f", prumernaKvalitaSpoluprace) + "/3.0)");
+        System.out.println("Rizikové skóre: " + String.format(Locale.US, "%.2f", celkoveRizikoveSkore));
         System.out.println("---------------------------");
     }
 }
