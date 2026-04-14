@@ -1,10 +1,8 @@
-package projekt;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabazeZamestnancu {
     private List<Zamestnanec> seznamZamestnancu = new ArrayList<>();
-    
     private int dalsiID = 1;
 
     public void pridatZamestnance(String skupina, String jmeno, String prijmeni, int rokNarozeni) {
@@ -15,18 +13,93 @@ public class DatabazeZamestnancu {
         } else if (skupina.equalsIgnoreCase("specialista")) {
             novyZamestnanec = new BezpecnostniSpecialista(dalsiID, jmeno, prijmeni, rokNarozeni);
         } else {
-            System.out.println("Neznama skupina");
+            System.out.println("Chyba: Neznámá skupina. Zadejte 'analytik' nebo 'specialista'.");
             return;
         }
 
         seznamZamestnancu.add(novyZamestnanec);
         System.out.println("Byl přidán zaměstnanec " + jmeno + " " + prijmeni + ". Přidělené ID: " + dalsiID);
-        
         dalsiID++;
+    }
+
+    public Zamestnanec najdiZamestnance(int id) {
+        for (Zamestnanec z : seznamZamestnancu) {
+            if (z.getID() == id) {
+                return z;
+            }
+        }
+        return null;
+    }
+
+    public void pridatSpolupraci(int idZamestnance, int idKolegy, String urovenText) {
+        Zamestnanec z1 = najdiZamestnance(idZamestnance);
+        Zamestnanec z2 = najdiZamestnance(idKolegy);
+
+        if (z1 == null || z2 == null) {
+            System.out.println("Chyba: Jeden nebo oba zaměstnanci nebyli nalezeni.");
+            return;
+        }
+        if (z1 == z2) {
+            System.out.println("Chyba: Zaměstnanec nemůže spolupracovat sám se sebou.");
+            return;
+        }
+
+        UrovenSpoluprace urovenEnum;
+        try {
+            urovenEnum = UrovenSpoluprace.valueOf(urovenText.toUpperCase().replace("Á", "A").replace("Š", "S").replace("Ů", "U"));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Chyba: Neplatná úroveň spolupráce! Zadejte 'spatna', 'prumerna' nebo 'dobra'.");
+            return;
+        }
+
+        z1.pridatSpolupracovnika(z2, urovenEnum);
+        z2.pridatSpolupracovnika(z1, urovenEnum); 
+        System.out.println("Spolupráce úspěšně zaznamenána.");
+    }
+
+    public void odebratZamestnance(int id) {
+        Zamestnanec zKVymazani = najdiZamestnance(id);
+
+        if (zKVymazani != null) {
+            for (Zamestnanec z : seznamZamestnancu) {
+                z.odebratSpolupracovnika(zKVymazani); 
+            }
+            seznamZamestnancu.remove(zKVymazani);
+            System.out.println("Zaměstnanec s ID " + id + " byl smazán z databáze včetně všech svých vazeb.");
+        } else {
+            System.out.println("Chyba: Zaměstnanec s ID " + id + " nenalezen.");
+        }
+    }
+
+    public void vypisInfoOZamestnanci(int id) {
+        Zamestnanec z = najdiZamestnance(id);
+        if (z != null) {
+            System.out.println("\n--- Informace o zaměstnanci ---");
+            System.out.println("ID: " + z.getID());
+            System.out.println("Jméno: " + z.getJmeno() + " " + z.getPrijmeni());
+            System.out.println("Rok narození: " + z.getRokNarozeni());
+            System.out.println("Pozice: " + z.getClass().getSimpleName());
+            System.out.println("Počet spolupracovníků: " + z.getSpolupracovnici().size());
+        } else {
+            System.out.println("Zaměstnanec s ID " + id + " nenalezen.");
+        }
+    }
+
+    public void spustitDovednostZamestnance(int id) {
+        Zamestnanec z = najdiZamestnance(id);
+        if (z != null) {
+            z.spustitDovednost(); 
+        } else {
+            System.out.println("Zaměstnanec s ID " + id + " nenalezen.");
+        }
     }
 
     public void vypisVsechnyZamestnance() {
         System.out.println("\n--- Seznam zaměstnanců ---");
+        if (seznamZamestnancu.isEmpty()) {
+            System.out.println("Databáze je prázdná.");
+            return;
+        }
         for (Zamestnanec z : seznamZamestnancu) {
             System.out.println("ID: " + z.getID() + " | " + z.getJmeno() + " " + z.getPrijmeni() + 
                                " (" + z.getRokNarozeni() + ") | Skupina: " + z.getClass().getSimpleName());
