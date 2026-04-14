@@ -16,6 +16,9 @@ public class Main {
             System.out.println("4 - Odebrat zaměstnance");
             System.out.println("5 - Vyhledat zaměstnance dle ID");
             System.out.println("6 - Spustit dovednost zaměstnance");
+            System.out.println("7 - Abecední výpis zaměstnanců ve skupinách");
+            System.out.println("8 - Zobrazit statistiky spolupráce");
+            System.out.println("9 - Zobrazit počet zaměstnanců ve skupinách");
             System.out.println("0 - Konec programu");
             System.out.print("Vaše volba: ");
 
@@ -87,6 +90,18 @@ public class Main {
                     } catch (NumberFormatException e) {
                         System.out.println("Chyba: ID musí být číslo!");
                     }
+                    break;
+                    
+                case "7":
+                    databaze.vypisAbecedneVeSkupinach();
+                    break;
+                    
+                case "8":
+                    databaze.vypisStatistiky();
+                    break;
+                    
+                case "9":
+                    databaze.vypisPocetVeSkupinach();
                     break;
 
                 case "0":
