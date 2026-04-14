@@ -1,4 +1,3 @@
-package projekt;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +7,7 @@ public abstract class Zamestnanec {
     private String prijmeni;
     private int rokNarozeni;
     
-    private Map<Integer, UrovenSpoluprace> spolupracovnici;
+    private Map<Zamestnanec, UrovenSpoluprace> spolupracovnici;
 
     public Zamestnanec(int ID, String jmeno, String prijmeni, int rokNarozeni) {
         this.ID = ID;
@@ -18,37 +17,26 @@ public abstract class Zamestnanec {
         this.spolupracovnici = new HashMap<>();
     }
 
-    public int getID() { 
-    	return ID; 
-    	}
+    public void pridatSpolupracovnika(Zamestnanec kolega, UrovenSpoluprace uroven) {
+        spolupracovnici.put(kolega, uroven);
+    }
+
+    public void odebratSpolupracovnika(Zamestnanec kolega) {
+        spolupracovnici.remove(kolega);
+    }
+
+    public int getID() { return ID; }
     
-    public String getJmeno() { 
-    	return jmeno; 
-    	}
+    public String getJmeno() { return jmeno; }
+    public void setJmeno(String jmeno) { this.jmeno = jmeno; }
     
-    public void setJmeno(String jmeno) { 
-    	this.jmeno = jmeno; 
-    	}
+    public String getPrijmeni() { return prijmeni; }
+    public void setPrijmeni(String prijmeni) { this.prijmeni = prijmeni; }
     
-    public String getPrijmeni() { 
-    	return prijmeni; 
-    	}
+    public int getRokNarozeni() { return rokNarozeni; }
+    public void setRokNarozeni(int rokNarozeni) { this.rokNarozeni = rokNarozeni; }
     
-    public void setPrijmeni(String prijmeni) { 
-    	this.prijmeni = prijmeni; 
-    	}
-    
-    public int getRokNarozeni() { 
-    	return rokNarozeni; 
-    	}
-    
-    public void setRokNarozeni(int rokNarozeni) { 
-    	this.rokNarozeni = rokNarozeni; 
-    	}
-    
-    public Map<Integer, UrovenSpoluprace> getSpolupracovnici() { 
-    	return spolupracovnici; 
-    	}
+    public Map<Zamestnanec, UrovenSpoluprace> getSpolupracovnici() { return spolupracovnici; }
 
     public abstract void spustitDovednost();
 }
