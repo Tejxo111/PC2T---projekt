@@ -1,3 +1,4 @@
+package projekt;
 import java.util.Map;
 
 public class DatovyAnalytik extends Zamestnanec {

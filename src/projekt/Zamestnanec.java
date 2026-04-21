@@ -1,3 +1,4 @@
+package projekt;
 import java.util.HashMap;
 import java.util.Map;
  

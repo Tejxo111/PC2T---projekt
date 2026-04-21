@@ -1,3 +1,4 @@
+package projekt;
 import java.util.Scanner;
 
 public class Main {
@@ -106,7 +107,7 @@ public class Main {
 
                 case "0":
                     bezi = false;
-                    System.out.println("Ukončuji program. Na shledanou!");
+                    System.out.println("Konec programu");
                     break;
 
                 default:
