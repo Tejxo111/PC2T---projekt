@@ -20,6 +20,8 @@ public class Main {
             System.out.println("7 - Abecední výpis zaměstnanců ve skupinách");
             System.out.println("8 - Zobrazit statistiky spolupráce");
             System.out.println("9 - Zobrazit počet zaměstnanců ve skupinách");
+            System.out.println("10 - Uložit databázi zaměstnanců do souboru");
+            System.out.println("11 - Načíst databázi zaměstnanců ze souboru");
             System.out.println("0 - Konec programu");
             System.out.print("Vaše volba: ");
 
@@ -29,7 +31,7 @@ public class Main {
                 case "1":
                     System.out.print("Zadejte skupinu (analytik / specialista): ");
                     String skupina = scanner.nextLine();
-                    System.out.print("Zadejte jméno: ");
+                    System.out.print("Zadejte křestní jméno: ");
                     String jmeno = scanner.nextLine();
                     System.out.print("Zadejte příjmení: ");
                     String prijmeni = scanner.nextLine();
@@ -103,6 +105,14 @@ public class Main {
                     
                 case "9":
                     databaze.vypisPocetVeSkupinach();
+                    break;
+                
+                case "10":
+                    databaze.ulozDoSouboru("databaze.txt");
+                    break;
+                    
+                case "11":
+                    databaze.nactiZeSouboru("databaze.txt");
                     break;
 
                 case "0":

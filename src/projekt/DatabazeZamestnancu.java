@@ -5,6 +5,14 @@ import java.util.List;
 import java.text.Collator;
 import java.util.Locale;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Scanner;
+
 public class DatabazeZamestnancu {
     private List<Zamestnanec> seznamZamestnancu = new ArrayList<>();
     private int dalsiID = 1;
@@ -195,5 +203,80 @@ public class DatabazeZamestnancu {
         System.out.println("Datoví analytici: " + pocetAnalytiku);
         System.out.println("Bezpečnostní specialisté: " + pocetSpecialistu);
         System.out.println("Celkem zaměstnanců: " + seznamZamestnancu.size());
+    }
+   
+    public void ulozDoSouboru(String nazevSouboru) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(nazevSouboru))) {
+            for (Zamestnanec z : seznamZamestnancu) {
+                String typ = (z instanceof DatovyAnalytik) ? "analytik" : "specialista";
+                writer.println("EMP;" + typ + ";" + z.getID() + ";" + z.getJmeno() + ";" + z.getPrijmeni() + ";" + z.getRokNarozeni());
+            }
+            
+            for (Zamestnanec z : seznamZamestnancu) {
+                for (Map.Entry<Zamestnanec, UrovenSpoluprace> entry : z.getSpolupracovnici().entrySet()) {
+                    Zamestnanec kolega = entry.getKey();
+                    if (z.getID() < kolega.getID()) {
+                        writer.println("REL;" + z.getID() + ";" + kolega.getID() + ";" + entry.getValue().name());
+                    }
+                }
+            }
+            System.out.println("Data byla úspěšně uložena do souboru: " + nazevSouboru);
+        } catch (IOException e) {
+            System.out.println("Chyba při ukládání do souboru: " + e.getMessage());
+        }
+    }
+
+    public void nactiZeSouboru(String nazevSouboru) {
+        try (Scanner fileScanner = new Scanner(new File(nazevSouboru))) {
+            seznamZamestnancu.clear();
+            int maxId = 0;
+
+            while (fileScanner.hasNextLine()) {
+                String radek = fileScanner.nextLine();
+                if (radek.trim().isEmpty()) continue;
+
+                String[] casti = radek.split(";");
+                
+                if (casti[0].equals("EMP")) {
+                    String typ = casti[1];
+                    int id = Integer.parseInt(casti[2]);
+                    String jmeno = casti[3];
+                    String prijmeni = casti[4];
+                    int rok = Integer.parseInt(casti[5]);
+
+                    Zamestnanec novyZamestnanec;
+                    if (typ.equals("analytik")) {
+                        novyZamestnanec = new DatovyAnalytik(id, jmeno, prijmeni, rok);
+                    } else {
+                        novyZamestnanec = new BezpecnostniSpecialista(id, jmeno, prijmeni, rok);
+                    }
+                    seznamZamestnancu.add(novyZamestnanec);
+                    
+                    if (id > maxId) {
+                        maxId = id;
+                    }
+
+                } else if (casti[0].equals("REL")) {
+                    int id1 = Integer.parseInt(casti[1]);
+                    int id2 = Integer.parseInt(casti[2]);
+                    UrovenSpoluprace uroven = UrovenSpoluprace.valueOf(casti[3]);
+
+                    Zamestnanec z1 = najdiZamestnance(id1);
+                    Zamestnanec z2 = najdiZamestnance(id2);
+                    
+                    if (z1 != null && z2 != null) {
+                        z1.pridatSpolupracovnika(z2, uroven);
+                        z2.pridatSpolupracovnika(z1, uroven);
+                    }
+                }
+            }
+            dalsiID = maxId + 1;
+            System.out.println("Data byla úspěšně načtena ze souboru: " + nazevSouboru);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Soubor '" + nazevSouboru + "' nebyl nalezen.");
+        } catch (Exception e) {
+            System.out.println("Při čtení souboru došlo k chybě: " + e.getMessage());
+        }
     }
 }

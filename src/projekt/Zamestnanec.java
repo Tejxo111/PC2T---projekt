@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
  
 public abstract class Zamestnanec {
-    private int ID;
+	private int ID;
     private String jmeno;
     private String prijmeni;
     private int rokNarozeni;
