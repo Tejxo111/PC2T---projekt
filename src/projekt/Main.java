@@ -4,6 +4,9 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         DatabazeZamestnancu databaze = new DatabazeZamestnancu();
+        
+        databaze.nactiZSQL();
+        
         Scanner scanner = new Scanner(System.in);
         boolean bezi = true;
         
@@ -117,6 +120,7 @@ public class Main {
 
                 case "0":
                     bezi = false;
+                    databaze.ulozDoSQL();
                     System.out.println("Konec programu");
                     break;
 

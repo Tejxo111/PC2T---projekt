@@ -13,6 +13,12 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Scanner;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 public class DatabazeZamestnancu {
     private List<Zamestnanec> seznamZamestnancu = new ArrayList<>();
     private int dalsiID = 1;
@@ -277,6 +283,105 @@ public class DatabazeZamestnancu {
             System.out.println("Soubor '" + nazevSouboru + "' nebyl nalezen.");
         } catch (Exception e) {
             System.out.println("Při čtení souboru došlo k chybě: " + e.getMessage());
+        }
+    }
+    
+    private final String DB_URL = "jdbc:sqlite:zaloha_zamestnancu.db";
+
+    public void nactiZSQL() {
+        System.out.println("Pokouším se načíst zálohu ze SQL databáze");
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("CREATE TABLE IF NOT EXISTS Zamestnanci (id INTEGER PRIMARY KEY, typ TEXT, jmeno TEXT, prijmeni TEXT, rokNarozeni INTEGER)");
+                stmt.execute("CREATE TABLE IF NOT EXISTS Spoluprace (id1 INTEGER, id2 INTEGER, uroven TEXT)");
+            }
+
+            seznamZamestnancu.clear();
+            int maxId = 0;
+
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM Zamestnanci")) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String typ = rs.getString("typ");
+                    String jmeno = rs.getString("jmeno");
+                    String prijmeni = rs.getString("prijmeni");
+                    int rok = rs.getInt("rokNarozeni");
+                    
+                    Zamestnanec z = typ.equals("analytik") ? 
+                        new DatovyAnalytik(id, jmeno, prijmeni, rok) : 
+                        new BezpecnostniSpecialista(id, jmeno, prijmeni, rok);
+                    
+                    seznamZamestnancu.add(z);
+                    if (id > maxId) maxId = id;
+                }
+            }
+
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM Spoluprace")) {
+                while (rs.next()) {
+                    int id1 = rs.getInt("id1");
+                    int id2 = rs.getInt("id2");
+                    UrovenSpoluprace uroven = UrovenSpoluprace.valueOf(rs.getString("uroven"));
+                    
+                    Zamestnanec z1 = najdiZamestnance(id1);
+                    Zamestnanec z2 = najdiZamestnance(id2);
+                    
+                    if (z1 != null && z2 != null) {
+                        z1.pridatSpolupracovnika(z2, uroven);
+                        z2.pridatSpolupracovnika(z1, uroven);
+                    }
+                }
+            }
+            
+            dalsiID = maxId + 1;
+            System.out.println("SQL databáze byla úspěšně načtena.");
+            
+        } catch (Exception e) {
+            System.out.println("SQL databáze není dostupná (" + e.getMessage() + ").");
+        }
+    }
+
+    public void ulozDoSQL() {
+        System.out.println("Zálohuji data do SQL databáze");
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("DROP TABLE IF EXISTS Zamestnanci");
+                stmt.execute("DROP TABLE IF EXISTS Spoluprace");
+                stmt.execute("CREATE TABLE Zamestnanci (id INTEGER PRIMARY KEY, typ TEXT, jmeno TEXT, prijmeni TEXT, rokNarozeni INTEGER)");
+                stmt.execute("CREATE TABLE Spoluprace (id1 INTEGER, id2 INTEGER, uroven TEXT)");
+            }
+
+            String insertZam = "INSERT INTO Zamestnanci (id, typ, jmeno, prijmeni, rokNarozeni) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(insertZam)) {
+                for (Zamestnanec z : seznamZamestnancu) {
+                    pstmt.setInt(1, z.getID());
+                    pstmt.setString(2, (z instanceof DatovyAnalytik) ? "analytik" : "specialista");
+                    pstmt.setString(3, z.getJmeno());
+                    pstmt.setString(4, z.getPrijmeni());
+                    pstmt.setInt(5, z.getRokNarozeni());
+                    pstmt.executeUpdate();
+                }
+            }
+
+            String insertSpol = "INSERT INTO Spoluprace (id1, id2, uroven) VALUES (?, ?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(insertSpol)) {
+                for (Zamestnanec z : seznamZamestnancu) {
+                    for (Map.Entry<Zamestnanec, UrovenSpoluprace> entry : z.getSpolupracovnici().entrySet()) {
+                        if (z.getID() < entry.getKey().getID()) {
+                            pstmt.setInt(1, z.getID());
+                            pstmt.setInt(2, entry.getKey().getID());
+                            pstmt.setString(3, entry.getValue().name());
+                            pstmt.executeUpdate();
+                        }
+                    }
+                }
+            }
+            System.out.println("Záloha dat do SQL proběhla úspěšně.");
+            
+        } catch (Exception e) {
+            System.out.println("Upozornění: Data se nepodařilo zazálohovat do SQL (" + e.getMessage() + ").");
         }
     }
 }
