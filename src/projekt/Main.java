@@ -10,7 +10,10 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         boolean bezi = true;
         
+        
+        System.out.println("\n-------------------------------------");
         System.out.println("--- Systém pro správu zaměstnanců ---");
+        System.out.println("-------------------------------------");
 
         while (bezi) {
             System.out.println("\nVyberte akci:");

@@ -1,0 +1,9 @@
+EMP;analytik;2;tomáš;tavrůžek;2005
+EMP;specialista;3;hynek;svoboda;2004
+EMP;analytik;4;lukáš;tvarůžek;2007
+EMP;analytik;5;petr;procházka;2004
+EMP;specialista;6;adam;vejmelka;2011
+REL;2;4;DOBRA
+REL;2;3;DOBRA
+REL;3;4;DOBRA
+REL;5;6;PRUMERNA

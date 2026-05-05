@@ -178,7 +178,7 @@ public class DatabazeZamestnancu {
             }
         }
 
-        System.out.println("\n--- Statistiky systému ---");
+        System.out.println("\n--- Statistiky spolupráce ---");
         
         System.out.print("Převažující kvalita spolupráce ve firmě: ");
         if (spatna == 0 && prumerna == 0 && dobra == 0) {
