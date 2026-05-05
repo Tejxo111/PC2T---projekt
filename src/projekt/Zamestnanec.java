@@ -26,18 +26,37 @@ public abstract class Zamestnanec {
         spolupracovnici.remove(kolega);
     }
 
-    public int getID() { return ID; }
+    public int getID() { 
+    	return ID; 
+    	}
     
-    public String getJmeno() { return jmeno; }
-    public void setJmeno(String jmeno) { this.jmeno = jmeno; }
+    public String getJmeno() { 
+    	return jmeno; 
+    	}
     
-    public String getPrijmeni() { return prijmeni; }
-    public void setPrijmeni(String prijmeni) { this.prijmeni = prijmeni; }
+    public void setJmeno(String jmeno) { 
+    	this.jmeno = jmeno; 
+    	}
     
-    public int getRokNarozeni() { return rokNarozeni; }
-    public void setRokNarozeni(int rokNarozeni) { this.rokNarozeni = rokNarozeni; }
+    public String getPrijmeni() { 
+    	return prijmeni; 
+    	}
     
-    public Map<Zamestnanec, UrovenSpoluprace> getSpolupracovnici() { return spolupracovnici; }
+    public void setPrijmeni(String prijmeni) { 
+    	this.prijmeni = prijmeni; 
+    	}
+    
+    public int getRokNarozeni() { 
+    	return rokNarozeni; 
+    	}
+    
+    public void setRokNarozeni(int rokNarozeni) { 
+    	this.rokNarozeni = rokNarozeni; 
+    	}
+    
+    public Map<Zamestnanec, UrovenSpoluprace> getSpolupracovnici() { 
+    	return spolupracovnici; 
+    	}
 
     public abstract void spustitDovednost();
 }
